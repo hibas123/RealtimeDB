@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>{{title}}</title>
+   <link rel="stylesheet" href="https://unpkg.com/@hibas123/theme@1/out/base.css">
+   <link rel="stylesheet" href="https://unpkg.com/@hibas123/theme@1/out/light.css">
+
+   <style>
+      table {
+         border-collapse: collapse;
+         width: 100%;
+      }
+
+      th,
+      td {
+         text-align: left;
+         padding: 8px;
+      }
+
+      tr:nth-child(even) {
+         background-color: #f2f2f2
+      }
+
+      tr:first-child {
+         background-color: var(--primary);
+         color: var(--on-primary);
+      }
+   </style>
+</head>
+
+<body>
+   <div class="container">
+      <div class="margin" style="margin-top: 4rem;">
+         <h1>{{title}}</h1>
+         {{#if empty}}
+         <h3>No Data available!</h3>
+         {{else}}
+
+         <table style="overflow-x: auto">
+            {{#each table as |row|}}
+            <tr>
+               {{#each row as |col|}}
+               <td>{{col}}</td>
+               {{/each}}
+            </tr>
+            {{/each}}
+         </table>
+         {{/if}}
+      </div>
+   </div>
+</body>
+
+</html>

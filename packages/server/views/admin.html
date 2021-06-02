@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+      <title>Admin Interface</title>
+      <link
+         rel="stylesheet"
+         href="https://unpkg.com/@hibas123/theme@1/out/base.css"
+      />
+      <link
+         rel="stylesheet"
+         href="https://unpkg.com/@hibas123/theme@1/out/light.css"
+      />
+
+      <script src="https://unpkg.com/handlebars/dist/handlebars.min.js"></script>
+
+      <style>
+         #message {
+            visibility: hidden;
+            background-color: lightgreen;
+            border: 1px solid lime;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+         }
+
+         .grid {
+            display: grid;
+            height: 100vh;
+            grid-template-columns: 360px auto;
+         }
+
+         #navigation {
+            height: 100vh;
+            overflow: auto;
+            border-right: 1px solid darkgrey;
+            padding: 1rem;
+         }
+
+         #content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            border: 0;
+         }
+      </style>
+   </head>
+
+   <body>
+      <div class="grid">
+         <div id="navigation">
+            <h2>Navigation:</h2>
+            <ul class="list list-clickable">
+               <li onclick="loadView('settings');">Settings</li>
+               <li onclick="loadView('database', {full:true});">Databases</li>
+               <li onclick="loadView('database/new');">New Database</li>
+            </ul>
+            Databases:
+            <div
+               id="dbs"
+               class="list list-clickable"
+               style="margin: 1rem"
+            ></div>
+         </div>
+         <div style="position: relative">
+            <iframe id="content"></iframe>
+         </div>
+      </div>
+
+      <template> </template>
+
+      <script>
+         const key = new URL(window.location.href).searchParams.get("key");
+         const content = document.getElementById("content");
+         const base = new URL(window.location.href).host;
+
+         function getUrl(name, params, view = true) {
+            const url = new URL(window.location.href);
+            url.pathname = "/v1/admin/" + name;
+            for (let key in params || {})
+               url.searchParams.set(key, params[key]);
+
+            url.searchParams.set("key", key);
+            if (view) url.searchParams.set("view", "true");
+
+            return url.href;
+         }
+
+         function loadView(name, params) {
+            content.src = getUrl(name, params);
+         }
+
+         loadView("settings");
+
+         const dbsul = document.getElementById("dbs");
+         function reloadDBs() {
+            fetch(getUrl("database", {}, false))
+               .then((res) => res.json())
+               .then((databases) =>
+                  databases.map(
+                     (database) => `
+<div class="card margin elv-4">
+   <h3>${database}</h3>
+   <button class=btn onclick="loadView('data', {database:'${database}'})">Data</button>
+   <button class=btn onclick="loadView('collections', {database:'${database}'})">Collections</button>
+   <button class=btn onclick="loadView('database/update', {database:'${database}'})">Change</button>
+   <button class=btn onclick="loadView('collections/cleanup', {database:'${database}'})">Clean</button>
+</div>`
+                  )
+               )
+               .then((d) => d.join("\n"))
+               .then((d) => (dbsul.innerHTML = d))
+               .catch(console.error);
+         }
+
+         reloadDBs();
+         setInterval(reloadDBs, 5000);
+      </script>
+   </body>
+</html>

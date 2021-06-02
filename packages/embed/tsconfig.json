@@ -1,0 +1,17 @@
+{
+   "compilerOptions": {
+      /* Basic Options */
+      "target": "es2019" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */,
+      "module": "commonjs" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */,
+      "declaration": true /* Generates corresponding '.d.ts' file. */,
+      "sourceMap": true /* Generates corresponding '.map' file. */,
+      "outDir": "./lib" /* Redirect output structure to the directory. */,
+      "strict": false /* Enable all strict type-checking options. */,
+      "preserveWatchOutput": true,
+      "experimentalDecorators": true /* Enables experimental support for ES7 decorators. */,
+      "emitDecoratorMetadata": true /* Enables experimental support for emitting type metadata for decorators. */,
+      "resolveJsonModule": true
+   },
+   "exclude": ["node_modules/"],
+   "include": ["./src"]
+}

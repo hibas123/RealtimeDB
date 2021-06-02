@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>{{title}}</title>
+   <link rel="stylesheet" href="https://unpkg.com/@hibas123/theme@1/out/base.css">
+   <link rel="stylesheet" href="https://unpkg.com/@hibas123/theme@1/out/light.css">
+   <link rel="stylesheet" href="https://unpkg.com/codemirror@5.58.2/lib/codemirror.css">
+
+   <style>
+      #message {
+         visibility: hidden;
+         background-color: lightgreen;
+         border: 1px solid lime;
+         border-radius: .5rem;
+         padding: 1rem;
+         font-size: 1.5rem;
+         margin-bottom: 1rem;
+      }
+   </style>
+</head>
+
+<body>
+   <div class="container">
+      <div class="margin" style="margin-top: 4rem;">
+         <h1>{{title}}</h1>
+         <div id="message"> </div>
+         <form id="f1" action="JavaScript:void(null)">
+            {{#each fields}}
+            <div class="input-group">
+               <label>{{label}}</label>
+               {{#ifCond type  "===" "text"}}
+               <input type="text" placeholder="{{label}}" name="{{name}}" value="{{value}}" {{disabled}} />
+               {{/ifCond}}
+
+               {{#ifCond type "===" "number"}}
+               <input type="number" placeholder="{{label}}" name="{{name}}" value="{{value}}" {{disabled}} />
+               {{/ifCond}}
+
+               {{#ifCond type "===" "boolean"}}
+               <input type="checkbox" name="{{name}}" checked="{{value}}" {{disabled}} />
+               {{/ifCond}}
+
+               {{#ifCond type "===" "textarea"}}
+               <textarea class="inp" name="{{name}}" rows="20" {{disabled}}>{{value}}</textarea>
+               {{/ifCond}}
+
+               {{#ifCond type "===" "codemirror"}}
+               <textarea codemirror class="inp" name="{{name}}" rows="20" {{disabled}}>{{value}}</textarea>
+               {{/ifCond}}
+            </div>
+            {{/each}}
+
+            <button class="btn btn-primary" onclick="submitData()">Submit</button>
+         </form>
+      </div>
+   </div>
+
+   <script>
+      let u = new URL("{{url}}", window.location.origin);
+      let key = new URL(window.location.href).searchParams.get("key");
+      if (key)
+         u.searchParams.set("key", key);
+
+      const message = document.getElementById("message");
+      const form = document.getElementById("f1");
+      function submitData() {
+         let res = {};
+         Array.from(new FormData(form).entries()).forEach(([name, value]) => res[name] = value);
+         fetch(u.href, {
+            method: "POST",
+            headers: {
+               "content-type": "application/json"
+            },
+            body: JSON.stringify(res)
+         }).then(res => {
+            return res.text();
+         }).then(res => {
+            message.innerText = res;
+            message.style.visibility = "unset";
+         })
+
+         return false;
+      }
+   </script>
+
+   <script src="https://unpkg.com/codemirror@5.58.2/lib/codemirror.js"></script>
+   <script>
+      document.querySelectorAll("textarea[codemirror]").forEach(elm => {
+         const cm = CodeMirror.fromTextArea(elm, {
+            lineNumbers: true,
+            indentUnit: 3,
+            tabSize: 3,
+         })
+
+         cm.on("change", () => cm.save())
+      })
+   </script>
+</body>
+
+</html>
