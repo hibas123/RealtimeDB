@@ -1,5 +1,5 @@
 {
-   "name": "@hibas123/realtimedb-rules",
+   "name": "@rtdb2/rules",
    "version": "3.0.0-beta.0",
    "description": "",
    "main": "lib/index.js",
@@ -24,8 +24,8 @@
    "dependencies": {
       "@hibas123/logging": "^3.1.2",
       "@hibas123/nodelogging": "^3.1.3",
-      "@hibas123/realtimedb-core": "3",
-      "@hibas123/realtimedb-rules": "3",
+      "@rtdb2/core": "workspace:../core",
+      "@rtdb2/rules": "workspace:../rules",
       "@hibas123/utils": "^2.2.18",
       "dotenv": "^10.0.0",
       "handlebars": "^4.7.7",

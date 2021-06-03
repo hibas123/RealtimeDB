@@ -1,4 +1,4 @@
-import { Operations } from "@hibas123/realtimedb-core";
+import { Operations } from "@rtdb2/-core";
 import { Token } from "./tokenise";
 
 export interface Node {

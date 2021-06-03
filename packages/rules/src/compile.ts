@@ -1,4 +1,4 @@
-import { IRuleEngine } from "@hibas123/realtimedb-core";
+import { IRuleEngine } from "@rtdb2/-core";
 
 import {
    Node,

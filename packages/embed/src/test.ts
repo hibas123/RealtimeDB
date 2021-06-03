@@ -1,4 +1,4 @@
-import { Database, Session } from "@hibas123/realtimedb-core";
+import { Database, Session } from "@rtdb2/core";
 
 const db = new Database("./test");
 

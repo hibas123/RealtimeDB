@@ -1,5 +1,5 @@
 {
-   "name": "@hibas123/realtimedb-embed",
+   "name": "@rtdb2/embed",
    "version": "3.0.0-beta.0",
    "description": "",
    "main": "lib/index.js",
@@ -20,6 +20,7 @@
    "dependencies": {
       "@hibas123/logging": "^3.1.2",
       "@hibas123/utils": "^2.2.18",
-      "nanoid": "^3.1.23"
+      "nanoid": "^3.1.23",
+      "@rtdb2/core": "workspace:../core"
    }
 }

@@ -1,8 +1,8 @@
 import Settings from "./settings";
 import nanoid = require("nanoid");
 
-import { Database } from "@hibas123/realtimedb-core";
-import compileRule, { RuleError } from "@hibas123/realtimedb-rules";
+import { Database } from "@rtdb2/-core";
+import compileRule, { RuleError } from "@rtdb2/-rules";
 import Logging from "@hibas123/logging";
 
 export class DatabaseManager {
