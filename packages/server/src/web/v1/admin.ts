@@ -8,7 +8,7 @@ import {
    NotFoundError,
 } from "../helper/errors";
 import { DatabaseManager } from "../../database";
-import { MP } from "@rtdb2/-core";
+import { MP } from "@rtdb2/core";
 import Logging from "@hibas123/logging";
 import config from "../../config";
 import { getView } from "../helper/hb";

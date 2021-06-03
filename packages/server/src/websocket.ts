@@ -2,7 +2,7 @@ import Logging from "@hibas123/logging";
 import { IncomingMessage, Server } from "http";
 import * as WebSocket from "ws";
 import { DatabaseManager } from "./database";
-import { ITypedQuery, Session } from "@rtdb2/-core";
+import { ITypedQuery, Session } from "@rtdb2/core";
 
 import { verifyJWT } from "./helper/jwt";
 import { nanoid } from "nanoid";

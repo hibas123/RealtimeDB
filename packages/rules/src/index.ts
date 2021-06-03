@@ -1,4 +1,4 @@
-import { IRuleEngine } from "@rtdb2/-core";
+import { IRuleEngine } from "@rtdb2/core";
 
 import { RuleError, transformError } from "./error";
 import parse, { ParserError } from "./parser";

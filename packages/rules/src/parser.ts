@@ -1,4 +1,4 @@
-import { Operations } from "@rtdb2/-core";
+import { Operations } from "@rtdb2/core";
 import { Token } from "./tokenise";
 
 export interface Node {

@@ -12,6 +12,7 @@
    "author": "Fabian Stamm <dev@fabianstamm.de>",
    "license": "ISC",
    "devDependencies": {
+      "@types/mocha": "^8.2.2",
       "@types/node": "^14.17.2",
       "nodemon": "^2.0.7",
       "ts-node": "^10.0.0",

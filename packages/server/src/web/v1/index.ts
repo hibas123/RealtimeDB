@@ -7,10 +7,10 @@ import {
    BadRequestError,
 } from "../helper/errors";
 import Logging from "@hibas123/logging";
-import { Session } from "@rtdb2/-core";
+import { Session } from "@rtdb2/core";
 import { nanoid } from "nanoid";
 import { verifyJWT } from "../../helper/jwt";
-import { QueryError } from "@rtdb2/-core";
+import { QueryError } from "@rtdb2/core";
 const V1 = new Router({ prefix: "/v1" });
 
 V1.use("/admin", AdminRoute.routes(), AdminRoute.allowedMethods());

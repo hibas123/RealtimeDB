@@ -2,6 +2,8 @@ import { Database, Session } from "@rtdb2/core";
 
 const db = new Database("./test");
 
+// db.run()
+
 const session = new Session("134");
 
 async function test() {

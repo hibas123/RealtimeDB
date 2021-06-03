@@ -1,5 +1,5 @@
 import { Lock } from "@hibas123/utils";
-import { getRawLevelDB, levelDBResNull } from "@rtdb2/-core";
+import { getRawLevelDB, levelDBResNull } from "@rtdb2/core";
 
 interface IDatabaseConfig {
    name: string;
