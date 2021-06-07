@@ -9,4 +9,4 @@ steps:
       - pnpm install
       - pnpm run -r build
       - pnpm run -r --filter @rtdb2/embed test
-      - pnpm run -r publish
+      - pnpm run -r run-publish
