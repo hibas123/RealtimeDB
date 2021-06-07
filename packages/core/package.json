@@ -1,31 +1,30 @@
 {
-   "name": "@rtdb2/core",
-   "version": "3.0.0-beta.2",
-   "description": "",
-   "main": "lib/index.js",
-   "scripts": {
-      "build": "tsc",
-      "dev": "nodemon -e ts --exec ts-node src/test.ts",
-      "prepublishOnly": "tsc" ,
-      "run-publish": "pnpm publish"
-   },
-   "author": "Fabian Stamm <dev@fabianstamm.de>",
-   "license": "ISC",
-   "devDependencies": {
-      "@types/leveldown": "^4.0.2",
-      "@types/levelup": "^4.3.1",
-      "@types/msgpack5": "^3.4.1",
-      "@types/node": "^14.17.2",
-      "nodemon": "^2.0.7",
-      "ts-node": "^10.0.0",
-      "typescript": "^4.3.2"
-   },
-   "dependencies": {
-      "@hibas123/logging": "^3.1.2",
-      "@hibas123/utils": "^2.2.18",
-      "leveldown": "^6.0.0",
-      "levelup": "^5.0.0",
-      "msgpack5": "^5.3.2",
-      "nanoid": "^3.1.23"
-   }
+	"name": "@rtdb2/core",
+	"version": "3.0.0-beta.2",
+	"description": "",
+	"main": "lib/index.js",
+	"author": "Fabian Stamm <dev@fabianstamm.de>",
+	"license": "ISC",
+	"devDependencies": {
+		"@types/leveldown": "^4.0.2",
+		"@types/levelup": "^4.3.1",
+		"@types/msgpack5": "^3.4.1",
+		"@types/node": "^14.17.2",
+		"nodemon": "^2.0.7",
+		"ts-node": "^10.0.0",
+		"typescript": "^4.3.2"
+	},
+	"dependencies": {
+		"@hibas123/logging": "^3.1.2",
+		"@hibas123/utils": "^2.2.18",
+		"leveldown": "^6.0.0",
+		"levelup": "^5.0.0",
+		"msgpack5": "^5.3.2",
+		"nanoid": "^3.1.23"
+	},
+	"scripts": {
+		"build": "tsc",
+		"dev": "nodemon -e ts --exec ts-node src/test.ts",
+		"run-publish": "pnpm publish"
+	}
 }
