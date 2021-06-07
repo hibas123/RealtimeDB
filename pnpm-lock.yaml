@@ -38,8 +38,10 @@ importers:
       '@hibas123/logging': ^3.1.2
       '@hibas123/utils': ^2.2.18
       '@rtdb2/core': workspace:../core
+      '@rtdb2/sdk': workspace:../sdk
       '@types/mocha': ^8.2.2
       '@types/node': ^14.17.2
+      mocha: ^8.4.0
       nanoid: ^3.1.23
       nodemon: ^2.0.7
       ts-node: ^10.0.0
@@ -48,10 +50,12 @@ importers:
       '@hibas123/logging': 3.1.2
       '@hibas123/utils': 2.2.18
       '@rtdb2/core': link:../core
+      '@rtdb2/sdk': link:../sdk
       nanoid: 3.1.23
     devDependencies:
       '@types/mocha': 8.2.2
       '@types/node': 14.17.2
+      mocha: 8.4.0
       nodemon: 2.0.7
       ts-node: 10.0.0_9c6825393a72b4b24406554754016cad
       typescript: 4.3.2
@@ -59,6 +63,7 @@ importers:
   packages/rules:
     specifiers:
       '@hibas123/logging': ^3.1.2
+      '@rtdb2/core': workspace:../core
       '@types/node': ^14.17.2
       nodemon: ^2.0.7
       ts-node: ^10.0.0
@@ -66,6 +71,7 @@ importers:
     dependencies:
       '@hibas123/logging': 3.1.2
     devDependencies:
+      '@rtdb2/core': link:../core
       '@types/node': 14.17.2
       nodemon: 2.0.7
       ts-node: 10.0.0_9c6825393a72b4b24406554754016cad
@@ -91,8 +97,6 @@ importers:
     dependencies:
       '@hibas123/logging': 3.1.2
       '@hibas123/utils': 2.2.18
-      chai: 4.3.4
-      chai-as-promised: 7.1.1_chai@4.3.4
       lodash.isequal: 4.5.0
       nanoid: 3.1.23
       ws: 7.4.6
@@ -101,6 +105,8 @@ importers:
       '@types/chai-as-promised': 7.1.4
       '@types/lodash.isequal': 4.5.5
       '@types/node': 14.17.2
+      chai: 4.3.4
+      chai-as-promised: 7.1.1_chai@4.3.4
       mocha: 8.4.0
       nodemon: 2.0.7
       ts-node: 10.0.0_9c6825393a72b4b24406554754016cad
@@ -468,7 +474,7 @@ packages:
 
   /assertion-error/1.1.0:
     resolution: {integrity: sha512-jgsaNduz+ndvGyFt3uSuWqvy4lCnIJiovtouQN5JZHOKCS2QuhEdbcQHFhVksz2N2U9hXJo8odG7ETyWlEeuDw==}
-    dev: false
+    dev: true
 
   /balanced-match/1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -600,7 +606,7 @@ packages:
     dependencies:
       chai: 4.3.4
       check-error: 1.0.2
-    dev: false
+    dev: true
 
   /chai/4.3.4:
     resolution: {integrity: sha512-yS5H68VYOCtN1cjfwumDSuzn/9c+yza4f3reKXlE5rUg7SFcCEy90gJvydNgOYtblyf4Zi6jIWRnXOgErta0KA==}
@@ -612,7 +618,7 @@ packages:
       get-func-name: 2.0.0
       pathval: 1.1.1
       type-detect: 4.0.8
-    dev: false
+    dev: true
 
   /chalk/3.0.0:
     resolution: {integrity: sha512-4D3B6Wf41KOYRFdszmDqMCGq5VV/uMAB273JILmO+3jAlh8X4qDtdtgCR3fxtbLEMzSx22QdhnDcJvu2u1fVwg==}
@@ -632,7 +638,7 @@ packages:
 
   /check-error/1.0.2:
     resolution: {integrity: sha1-V00xLt2Iu13YkS6Sht1sCu1KrII=}
-    dev: false
+    dev: true
 
   /chokidar/3.5.1:
     resolution: {integrity: sha512-9+s+Od+W0VJJzawDma/gvBNQqkTiqYTWLuZoyAsivsI4AaWTCzHG06/TMjsf1cYe9Cb97UCEhjz7HvnPk2p/tw==}
@@ -802,7 +808,7 @@ packages:
     engines: {node: '>=0.12'}
     dependencies:
       type-detect: 4.0.8
-    dev: false
+    dev: true
 
   /deep-equal/1.0.1:
     resolution: {integrity: sha1-9dJgKStmDghO/0zbyfCK0yR0SLU=}
@@ -975,7 +981,7 @@ packages:
 
   /get-func-name/2.0.0:
     resolution: {integrity: sha1-6td0q+5y4gQJQzoGY2YCPdaIekE=}
-    dev: false
+    dev: true
 
   /get-intrinsic/1.1.1:
     resolution: {integrity: sha512-kWZrnVM42QCiEA2Ig1bG8zjoIMOgxWwYCEeNdwY6Tv/cOSeGpcoX4pXHfKUxNKVoArnrEr2e9srnAxxGIraS9Q==}
@@ -1060,7 +1066,7 @@ packages:
       source-map: 0.6.1
       wordwrap: 1.0.0
     optionalDependencies:
-      uglify-js: 3.13.8
+      uglify-js: 3.13.9
     dev: false
 
   /has-flag/3.0.0:
@@ -1734,7 +1740,7 @@ packages:
 
   /pathval/1.1.1:
     resolution: {integrity: sha512-Dp6zGqpTdETdR63lehJYPeIOqpiNBNtc7BpWSLrOje7UaIsE5aY92r/AunQA7rsXvet3lrJ3JnZX29UPTKXyKQ==}
-    dev: false
+    dev: true
 
   /picomatch/2.3.0:
     resolution: {integrity: sha512-lY1Q/PiJGC2zOv/z391WOTD+Z02bCgsFfvxoXXf6h7kv9o+WmsmzYqrAwY63sNgOxE4xEdq0WyUnXfKeBrSvYw==}
@@ -2065,7 +2071,7 @@ packages:
   /type-detect/4.0.8:
     resolution: {integrity: sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==}
     engines: {node: '>=4'}
-    dev: false
+    dev: true
 
   /type-fest/0.8.1:
     resolution: {integrity: sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==}
@@ -2092,8 +2098,8 @@ packages:
     hasBin: true
     dev: true
 
-  /uglify-js/3.13.8:
-    resolution: {integrity: sha512-PvFLMFIQHfIjFFlvAch69U2IvIxK9TNzNWt1SxZGp9JZ/v70yvqIQuiJeVPPtUMOzoNt+aNRDk4wgxb34wvEqA==}
+  /uglify-js/3.13.9:
+    resolution: {integrity: sha512-wZbyTQ1w6Y7fHdt8sJnHfSIuWeDgk6B5rCb4E/AM6QNNPbOMIZph21PW5dRB3h7Df0GszN+t7RuUH6sWK5bF0g==}
     engines: {node: '>=0.8.0'}
     hasBin: true
     dev: false

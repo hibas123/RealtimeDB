@@ -1,46 +1,7 @@
-import { Database, Session } from "@rtdb2/core";
+import Database from "@rtdb2/sdk";
+import { testDB } from "@rtdb2/sdk/lib/tests";
+import { EmbeddedConnector } from "./main";
 
-const db = new Database("./test");
+const db = new Database(new EmbeddedConnector("./test"));
 
-// db.run()
-
-const session = new Session("134");
-
-async function test() {
-   const res = await db.run(
-      [
-         {
-            path: ["coll1", "doc1"],
-            type: "get",
-         },
-      ],
-      session
-   );
-   console.log(res);
-
-   await db.run(
-      [
-         {
-            path: ["coll1", "doc1"],
-            type: "set",
-            data: {
-               hi: "hallo" + Date.now(),
-            },
-         },
-      ],
-      session
-   );
-
-   const res2 = await db.run(
-      [
-         {
-            path: ["coll1", "doc1"],
-            type: "get",
-         },
-      ],
-      session
-   );
-   console.log(res2);
-}
-
-test();
+testDB(db);

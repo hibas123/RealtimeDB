@@ -7,7 +7,7 @@ import {
    ITypedQuery,
    IQuery,
 } from "./query";
-import Logging from "@hibas123/logging";
+import { LoggingBase, ILoggingInterface } from "@hibas123/logging";
 import Session from "./session";
 import nanoid = require("nanoid");
 import { Observable } from "@hibas123/utils";
@@ -38,6 +38,7 @@ const DummyRuleEngine = {
 } as IRuleEngine;
 
 export class Database {
+   logging: ILoggingInterface = new LoggingBase({ console: false });
    public static getKey(collectionid: string, documentid?: string) {
       return `${collectionid || ""}/${documentid || ""}`;
    }
@@ -205,7 +206,7 @@ export class Database {
 
       const isBatch = queries.length > 1;
       let parsed = queries.map((rawQuery) => {
-         Logging.debug("Running query:", rawQuery.type);
+         this.logging.debug("Running query:", rawQuery.type);
          this.validate(rawQuery);
          const isCollection = rawQuery.path.length % 2 === 1;
 
@@ -269,7 +270,7 @@ export class Database {
       session: Session,
       onchange: (change: any) => void
    ) {
-      Logging.debug("Snaphot request:", rawQuery.path);
+      this.logging.debug("Snaphot request:", rawQuery.path);
       this.validate(rawQuery);
 
       if (rawQuery.type !== "snapshot") throw new Error("Invalid query type!");
@@ -316,8 +317,8 @@ export class Database {
          const collections = new Set<string>();
          const onValue = (err: Error, key: string, value: string) => {
             if (err) {
-               Logging.error(err);
-               stream.end((err) => Logging.error(err));
+               this.logging.error(err);
+               stream.end((err) => this.logging.error(err));
                no(err);
             }
 
@@ -341,8 +342,8 @@ export class Database {
          const collections = new Set<string>();
          const onValue = (err: Error, key: string, value: Buffer) => {
             if (err) {
-               Logging.error(err);
-               stream.end((err) => Logging.error(err));
+               this.logging.error(err);
+               stream.end((err) => this.logging.error(err));
                no(err);
             }
 
@@ -383,8 +384,8 @@ export class Database {
 
             const onValue = (err: Error, key: string, value: Buffer) => {
                if (err) {
-                  Logging.error(err);
-                  stream.end((err) => Logging.error(err));
+                  this.logging.error(err);
+                  stream.end((err) => this.logging.error(err));
                   no(err);
                }
 

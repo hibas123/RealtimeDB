@@ -1,13 +1,13 @@
 {
    "name": "@rtdb2/core",
-   "version": "3.0.0-beta.0",
+   "version": "3.0.0-beta.1",
    "description": "",
    "main": "lib/index.js",
-   "private": true,
    "scripts": {
       "build": "tsc",
       "dev": "nodemon -e ts --exec ts-node src/test.ts",
-      "prepublishOnly": "tsc"
+      "prepublishOnly": "tsc" ,
+      "publish": "pnpm publish"
    },
    "author": "Fabian Stamm <dev@fabianstamm.de>",
    "license": "ISC",

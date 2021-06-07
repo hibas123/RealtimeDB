@@ -1,6 +1,17 @@
 // import * as WebSocket from "ws";
 
 import Database from "./database";
+export {
+   IConnector,
+   OfflineError,
+   ICollectionQueries,
+   IDocumentQueries,
+   IWriteQueries,
+   Change,
+   ICallQueryTypes,
+   IQueryRequest,
+   Snapshot,
+} from "./database";
 export default Database;
 export { Database };
 

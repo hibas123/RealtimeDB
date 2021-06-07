@@ -64,6 +64,7 @@ export class DatabaseWrapper {
          // Set blocking rule at the start
          hasPermission: () => false,
       });
+      this.#database.logging = Logging.getChild(name);
 
       if (rules) this.applyRules(rules);
    }

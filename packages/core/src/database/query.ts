@@ -1,7 +1,7 @@
 import { Database, Change, ChangeTypes } from "./database";
 import { resNull } from "../storage";
 import * as nanoid from "nanoid";
-import Logging from "@hibas123/logging";
+import { LoggingBase } from "@hibas123/logging";
 import * as MSGPack from "msgpack5";
 import Session from "./session";
 import { LevelUpChain } from "levelup";
@@ -130,7 +130,7 @@ export abstract class Query {
          sender: this.session.id,
       };
 
-      Logging.debug("Sending change:", change);
+      this.database.logging.debug("Sending change:", change);
 
       this.changes.push(change);
    }
@@ -498,7 +498,7 @@ export class CollectionQuery extends Query {
       if (!Array.isArray(value)) throw invalidWhere;
       let c = [];
       this._where = value.map((cond) => {
-         Logging.debug("Query Condition", cond);
+         this.database.logging.debug("Query Condition", cond);
          if (Array.isArray(cond)) {
             if (cond.length !== 3) throw invalidWhere;
             return cond;
@@ -631,11 +631,11 @@ export class CollectionQuery extends Query {
          const onValue = (err: Error, key: string, value: Buffer) => {
             if (err) {
                no(err);
-               stream.end((err) => Logging.error(err));
+               stream.end((err) => this.database.logging.error(err));
             } else {
                if (!key && !value) {
                   // END
-                  Logging.debug("Checked all!");
+                  this.database.logging.debug("Checked all!");
                   yes(values);
                } else {
                   let s = key.split("/", 2);

@@ -1,0 +1,12 @@
+kind: pipeline
+name: default
+
+steps:
+  - name: build_packages
+    image: node
+    commands:
+      - npm i -g pnpm
+      - pnpm install
+      - pnpm run -r build
+      - pnpm run -r --filter @rtdb2/embed test
+      - pnpm run -r publish

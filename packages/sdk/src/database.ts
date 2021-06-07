@@ -26,17 +26,22 @@ const delay = (time: number) => new Promise((yes) => setTimeout(yes, time));
 const ALPHABET =
    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-interface Change {
+export interface Change {
    data: any;
    document: string;
    type: DocumentChangeType;
 }
 
-type IWriteQueries = "set" | "update" | "delete" | "add";
-type ICollectionQueries = "get" | "add" | "keys" | "delete-collection" | "list";
-type IDocumentQueries = "get" | "set" | "update" | "delete";
+export type IWriteQueries = "set" | "update" | "delete" | "add";
+export type ICollectionQueries =
+   | "get"
+   | "add"
+   | "keys"
+   | "delete-collection"
+   | "list";
+export type IDocumentQueries = "get" | "set" | "update" | "delete";
 
-type ICallQueryTypes =
+export type ICallQueryTypes =
    | IWriteQueries
    | ICollectionQueries
    | IDocumentQueries
@@ -55,10 +60,14 @@ type DocRes = {
    data: any;
 };
 
+export type IQueryRequest =
+   | ITypedQuery<ICallQueryTypes>
+   | ITypedQuery<"set" | "update" | "delete">[];
+
 const custNano = NanoID.customAlphabet(ALPHABET, 21);
 const docNanoID = NanoID.customAlphabet(ALPHABET, 32);
 
-abstract class Snapshot<T> {
+export abstract class Snapshot<T> {
    protected id: string = custNano();
    public isSubscribed: boolean = false;
 
@@ -69,8 +78,8 @@ abstract class Snapshot<T> {
    abstract destroy(): void;
 }
 
-const QueryRequest = Symbol("queryRequest");
-const Snapshots = Symbol("snapshots");
+// const QueryRequest = Symbol("queryRequest");
+// const Snapshots = Symbol("snapshots");
 
 export class OfflineError extends Error {
    constructor() {
@@ -78,23 +87,34 @@ export class OfflineError extends Error {
    }
 }
 
-// TODO: Request Timeout
-export default class Database {
+export interface IConnector {
+   snapshots: Map<string, Snapshot<any>>;
+   offline: Utils.AwaitStore<boolean>;
+   queryRequest<T = any>(
+      query?: IQueryRequest,
+      id?: string,
+      ns?: string
+   ): Promise<T>;
+   close(): Promise<void>;
+}
+
+class WebSocketConnector implements IConnector {
    #offlineStore = new Utils.AwaitStore(true);
    #closedStore = new Utils.AwaitStore(false);
    #requests = new Map<string, (err?: Error, data?: any) => void>();
    #request = new Utils.AsyncIteratorFromCB<string>();
 
-   [Snapshots] = new Map<string, Snapshot<any>>();
+   snapshots = new Map<string, Snapshot<any>>();
+
+   #url: URL;
 
    public get offline() {
       return {
          state: this.#offlineStore.value,
          ...this.#offlineStore.getPublicApi(),
-      };
+      } as any;
    }
 
-   #url: URL;
    constructor(
       url: string,
       database: string,
@@ -205,7 +225,7 @@ export default class Database {
    }
 
    private handleSnapshot({ id, data }: { id: string; data: any }) {
-      let handler = this[Snapshots].get(id);
+      let handler = this.snapshots.get(id);
       if (handler) handler.receivedData(data);
    }
 
@@ -227,10 +247,8 @@ export default class Database {
       }
    }
 
-   public async [QueryRequest]<T = any>(
-      query?:
-         | ITypedQuery<ICallQueryTypes>
-         | ITypedQuery<"set" | "update" | "delete">[],
+   public async queryRequest<T = any>(
+      query?: IQueryRequest,
       id?: string,
       ns: string = "v2"
    ): Promise<T> {
@@ -275,15 +293,56 @@ export default class Database {
       });
    }
 
+   public async close() {
+      this.#closedStore.send(true);
+      this.#offlineStore.close();
+      this.#request.close();
+   }
+}
+
+// TODO: Request Timeout
+export default class Database {
+   connector: IConnector;
+
+   constructor(connector: IConnector);
+   constructor(
+      url: string,
+      database: string,
+      accesskey?: string,
+      authkey?: string,
+      rootkey?: string
+   );
+   constructor(
+      url: string | IConnector,
+      database?: string,
+      accesskey?: string,
+      authkey?: string,
+      rootkey?: string
+   ) {
+      if (typeof url === "string") {
+         this.connector = new WebSocketConnector(
+            url,
+            database,
+            accesskey,
+            authkey,
+            rootkey
+         );
+      } else {
+         this.connector = url;
+      }
+   }
+
    public collection<T = any>(name: string): ICollectionRef<T> {
       return new CollectionRef(this, [name]);
    }
 
    public async collections(): Promise<ICollectionRef[]> {
-      return this[QueryRequest]({
-         type: "list",
-         path: [],
-      }).then((res) => res.map((elm: any) => new CollectionRef(this, elm)));
+      return this.connector
+         .queryRequest({
+            type: "list",
+            path: [],
+         })
+         .then((res) => res.map((elm: any) => new CollectionRef(this, elm)));
    }
 
    public bulk(): IBulk {
@@ -291,9 +350,7 @@ export default class Database {
    }
 
    public async close() {
-      this.#closedStore.send(true);
-      this.#offlineStore.close();
-      this.#request.close();
+      await this.connector.close();
    }
 }
 
@@ -401,7 +458,7 @@ class Query implements IQuery {
    public async get(): Promise<IQuerySnapshot> {
       let data = this._order(
          (
-            await this.db[QueryRequest]<DocRes[]>({
+            await this.db.connector.queryRequest<DocRes[]>({
                type: "get",
                path: this.prefix,
                options: {
@@ -446,14 +503,14 @@ class Query implements IQuery {
       }
 
       async subscribe() {
-         this.query.database[Snapshots].set(this.id, this);
+         this.query.database.connector.snapshots.set(this.id, this);
          await this.resubscribe();
          return () => this.unsubscribe();
       }
 
       public unsubscribe() {
-         this.query.database[Snapshots].delete(this.id);
-         return this.query.database[QueryRequest](
+         this.query.database.connector.snapshots.delete(this.id);
+         return this.query.database.connector.queryRequest(
             {
                type: "unsubscribe",
                path: this.query.path,
@@ -496,20 +553,21 @@ class Query implements IQuery {
          if (this.isSubscribed) return;
 
          this.isSubscribed = true;
-         return this.query.database[QueryRequest]<DocRes[]>(
-            {
-               type: "snapshot",
-               options: {
-                  where: this.query._where,
-                  limit: this.query._limit,
+         return this.query.database.connector
+            .queryRequest<DocRes[]>(
+               {
+                  type: "snapshot",
+                  options: {
+                     where: this.query._where,
+                     limit: this.query._limit,
+                  },
+                  path: this.query.path,
                },
-               path: this.query.path,
-            },
-            this.id,
-            "snapshot"
-         )
+               this.id,
+               "snapshot"
+            )
             .catch((err) => {
-               this.query.database[Snapshots].delete(this.id);
+               this.query.database.connector.snapshots.delete(this.id);
                return Promise.reject(err);
             })
             .then((data) => {
@@ -564,7 +622,7 @@ class Query implements IQuery {
       }
 
       destroy() {
-         if (this.query.database[Snapshots].has(this.id)) {
+         if (this.query.database.connector.snapshots.has(this.id)) {
             this.unsubscribe();
          }
 
@@ -594,14 +652,14 @@ class CollectionRef extends Query implements ICollectionRef {
    }
 
    keys(): Promise<string[]> {
-      return this.db[QueryRequest]({
+      return this.db.connector.queryRequest({
          type: "keys",
          path: this.prefix,
       });
    }
 
    async add<T = any>(data: T): Promise<IDocumentRef<T>> {
-      let id = await this.db[QueryRequest]({
+      let id = await this.db.connector.queryRequest({
          type: "add",
          path: this.prefix,
          data,
@@ -610,7 +668,7 @@ class CollectionRef extends Query implements ICollectionRef {
    }
 
    delete() {
-      return this.db[QueryRequest]({
+      return this.db.connector.queryRequest({
          type: "delete-collection",
          path: this.prefix,
       });
@@ -633,7 +691,7 @@ class DocumentRef implements IDocumentRef {
    }
 
    get(): Promise<any> {
-      return this.db[QueryRequest]({
+      return this.db.connector.queryRequest({
          type: "get",
          path: this.prefix,
       });
@@ -648,7 +706,7 @@ class DocumentRef implements IDocumentRef {
    }
 
    set(data: any): Promise<void> {
-      return this.db[QueryRequest](this._set(data));
+      return this.db.connector.queryRequest(this._set(data));
    }
 
    _update(update: DocumentUpdate): ITypedQuery<"update"> {
@@ -695,7 +753,7 @@ class DocumentRef implements IDocumentRef {
    }
 
    update(update: DocumentUpdate): Promise<void> {
-      return this.db[QueryRequest](this._update(update));
+      return this.db.connector.queryRequest(this._update(update));
    }
 
    _delete(): ITypedQuery<"delete"> {
@@ -705,7 +763,7 @@ class DocumentRef implements IDocumentRef {
       };
    }
    delete(): Promise<void> {
-      return this.db[QueryRequest](this._delete());
+      return this.db.connector.queryRequest(this._delete());
    }
 
    static DocumentSnapshot = class extends Snapshot<any> {
@@ -721,14 +779,14 @@ class DocumentRef implements IDocumentRef {
       }
 
       async subscribe() {
-         this.document.database[Snapshots].set(this.id, this);
+         this.document.database.connector.snapshots.set(this.id, this);
          await this.resubscribe();
          return () => this.unsubscribe();
       }
 
       public unsubscribe() {
-         this.document.database[Snapshots].delete(this.id);
-         return this.document.database[QueryRequest](
+         this.document.database.connector.snapshots.delete(this.id);
+         return this.document.database.connector.queryRequest(
             {
                type: "unsubscribe",
                path: this.document.path,
@@ -756,16 +814,17 @@ class DocumentRef implements IDocumentRef {
       resubscribe() {
          if (this.isSubscribed) return;
          this.isSubscribed = true;
-         return this.document.database[QueryRequest]<any>(
-            {
-               type: "snapshot",
-               path: this.document.path,
-            },
-            this.id,
-            "snapshot"
-         )
+         return this.document.database.connector
+            .queryRequest<any>(
+               {
+                  type: "snapshot",
+                  path: this.document.path,
+               },
+               this.id,
+               "snapshot"
+            )
             .catch((err) => {
-               this.document.database[Snapshots].delete(this.id);
+               this.document.database.connector.snapshots.delete(this.id);
                return Promise.reject(err);
             })
             .then((data) => {
@@ -784,7 +843,7 @@ class DocumentRef implements IDocumentRef {
       }
 
       destroy() {
-         if (this.document.database[Snapshots].has(this.id)) {
+         if (this.document.database.connector.snapshots.has(this.id)) {
             this.unsubscribe();
          }
 
@@ -833,7 +892,7 @@ class Bulk implements IBulk {
 
    async commit() {
       if (this._queries.length > 0) {
-         await this._database[QueryRequest](this._queries);
+         await this._database.connector.queryRequest(this._queries);
       }
    }
 }
