@@ -23,8 +23,8 @@
    "dependencies": {
       "@hibas123/logging": "^3.1.2",
       "@hibas123/utils": "^2.2.18",
-      "nanoid": "^3.1.23",
       "@rtdb2/core": "workspace:../core",
-      "@rtdb2/sdk": "workspace:../sdk"
+      "@rtdb2/sdk": "workspace:../sdk",
+      "nanoid": "^3.1.23"
    }
 }
